@@ -46,4 +46,22 @@ class LaboratoryResults::ImporterTest < ActiveSupport::TestCase
     assert_equal 1, assessment.observations.count
     assert_equal 125.0, assessment.observations.first.value
   end
+
+  test "reports persisted observation count when duplicate codes are upserted" do
+    parsed_file = LaboratoryResults::Parser.call(<<~HL7).value!
+      John Doe|1985-03-15|M|REF-2024-001
+      8480-6|120|mmHg
+      8480-6|125|mmHg
+    HL7
+
+    result = LaboratoryResults::Importer.call(parsed_file)
+
+    assert result.success?
+    summary = result.value!
+    patient = Patient.find_by(name: "John Doe", dob: Date.new(1985, 3, 15), sex_at_birth: "Male")
+    assessment = patient.assessments.find_by(reference: "REF-2024-001")
+    assert_equal 1, assessment.observations.count
+    assert_equal 1, summary.observations
+    assert_equal 125.0, assessment.observations.first.value
+  end
 end

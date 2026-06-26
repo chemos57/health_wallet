@@ -17,7 +17,7 @@ module LaboratoryResults
     def call(parsed_file)
       patient_keys = Set.new
       assessment_keys = Set.new
-      observations_count = 0
+      observation_keys = Set.new
 
       parsed_file.assessments.each do |assessment_record|
         patient = find_or_create_patient(assessment_record)
@@ -27,15 +27,15 @@ module LaboratoryResults
         assessment_keys << assessment.id.to_s
 
         assessment_record.observations.each do |observation_record|
-          upsert_observation(assessment, observation_record)
-          observations_count += 1
+          observation = upsert_observation(assessment, observation_record)
+          observation_keys << observation.id.to_s
         end
       end
 
       Success(ImportSummary.new(
         patients: patient_keys.length,
         assessments: assessment_keys.length,
-        observations: observations_count
+        observations: observation_keys.length
       ))
     rescue StandardError => error
       Failure(ImportFailure.new(message: "Import failed: #{error.message}"))
@@ -58,12 +58,13 @@ module LaboratoryResults
         patient.assessments.create!(reference: record.reference, date: Date.current.to_s)
     end
 
-    sig { params(assessment: Assessment, record: ObservationRecord).void }
+    sig { params(assessment: Assessment, record: ObservationRecord).returns(Observation) }
     def upsert_observation(assessment, record)
       observation = assessment.observations.find { |existing| existing.code == record.code }
 
       if observation
         observation.update!(name: record.name, value: record.value, units: record.units)
+        observation
       else
         assessment.observations.create!(
           name: record.name,

@@ -13,7 +13,7 @@ class LaboratoryImport
   field :assessments_count, type: Integer, default: 0
   field :observations_count, type: Integer, default: 0
 
-  validates :original_filename, :content, :status, presence: true
+  validates :original_filename, :status, presence: true
   validates :status, inclusion: { in: STATUSES }
 
   scope :recent, -> { desc(:created_at) }

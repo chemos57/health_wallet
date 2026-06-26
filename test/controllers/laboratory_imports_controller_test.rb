@@ -43,4 +43,24 @@ class LaboratoryImportsControllerTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_entity
     assert_match "Choose a file", response.body
   end
+
+  test "creates an import for an empty uploaded file so parsing can fail cleanly" do
+    file = Tempfile.new([ "empty", ".txt" ])
+
+    assert_enqueued_with(job: LaboratoryImportJob) do
+      post laboratory_imports_url, params: {
+        laboratory_import: {
+          file: Rack::Test::UploadedFile.new(file.path, "text/plain", original_filename: "empty.txt")
+        }
+      }
+    end
+
+    import = LaboratoryImport.last
+    assert_redirected_to laboratory_import_url(import)
+    assert_equal "pending", import.status
+    assert_equal "", import.content
+  ensure
+    file.close
+    file.unlink
+  end
 end
