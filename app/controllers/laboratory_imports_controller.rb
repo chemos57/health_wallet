@@ -16,14 +16,19 @@ class LaboratoryImportsController < ApplicationController
       return render :new, status: :unprocessable_entity
     end
 
+    upload = LaboratoryImportUpload.create!(file: file)
+
     laboratory_import = LaboratoryImport.create!(
       original_filename: file.original_filename,
-      content: file.read.force_encoding(Encoding::UTF_8),
+      upload_id: upload.id,
       status: "pending"
     )
 
     LaboratoryImportJob.perform_later(laboratory_import.id.to_s)
     redirect_to laboratory_import_path(laboratory_import), notice: "Laboratory import queued."
+  rescue StandardError
+    cleanup_upload(upload)
+    raise
   end
 
   def show
@@ -34,5 +39,14 @@ class LaboratoryImportsController < ApplicationController
 
   def uploaded_file
     params.dig(:laboratory_import, :file)
+  end
+
+  def cleanup_upload(upload)
+    return unless upload
+
+    upload.file.purge if upload.file.attached?
+    upload.destroy!
+  rescue StandardError => error
+    Rails.logger.warn("Failed to clean up laboratory import upload #{upload&.id}: #{error.message}")
   end
 end

@@ -3,7 +3,7 @@ class LaboratoryImportJob < ApplicationJob
     laboratory_import = LaboratoryImport.find(laboratory_import_id)
     laboratory_import.update!(status: "processing", error_message: nil)
 
-    parse_result = ::LaboratoryResults::Parser.call(laboratory_import.content)
+    parse_result = ::LaboratoryResults::Parser.call(laboratory_import.file_content)
     return mark_failed(laboratory_import, parse_result.failure.message) if parse_result.failure?
 
     import_result = ::LaboratoryResults::Importer.call(parse_result.value!)

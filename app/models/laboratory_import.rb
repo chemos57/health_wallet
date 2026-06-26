@@ -5,7 +5,7 @@ class LaboratoryImport
   STATUSES = %w[pending processing completed failed].freeze
 
   field :original_filename, type: String
-  field :content, type: String
+  field :upload_id, type: Integer
   field :status, type: String, default: "pending"
   field :error_message, type: String
   field :processed_at, type: Time
@@ -17,4 +17,18 @@ class LaboratoryImport
   validates :status, inclusion: { in: STATUSES }
 
   scope :recent, -> { desc(:created_at) }
+
+  def upload
+    @upload ||= LaboratoryImportUpload.find_by(id: upload_id) if upload_id
+  end
+
+  def file
+    upload&.file
+  end
+
+  def file_content
+    raise "Uploaded file is missing" unless file&.attached?
+
+    file.download.force_encoding(Encoding::UTF_8)
+  end
 end
