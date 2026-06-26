@@ -1,0 +1,24 @@
+<div class="patient-detail">
+  <div class="patient-header">
+    <%= link_to "← Back to Imports", laboratory_imports_path, class: "back-link" %>
+    <h1>Upload Laboratory Results</h1>
+  </div>
+
+  <% if @error.present? %>
+    <div class="flash-error"><%= @error %></div>
+  <% end %>
+
+  <%= form_with url: laboratory_imports_path, scope: :laboratory_import, multipart: true, class: "observations-form" do |form| %>
+    <div class="upload-panel">
+      <div class="form-group">
+        <%= form.label :file, "Simplified HL7 file", class: "form-label" %>
+        <%= form.file_field :file, accept: ".txt,text/plain", class: "form-input upload-input" %>
+      </div>
+
+      <div class="form-actions">
+        <%= link_to "Cancel", laboratory_imports_path, class: "btn btn-secondary" %>
+        <%= form.submit "Upload", class: "btn btn-primary" %>
+      </div>
+    </div>
+  <% end %>
+</div>

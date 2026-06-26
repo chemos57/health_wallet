@@ -27,5 +27,10 @@
 
   <body>
     <%= yield %>
+
+    <nav class="global-footer-nav" aria-label="Primary navigation">
+      <%= link_to "Patients", patients_path, class: "global-footer-link" %>
+      <%= link_to "Imports", laboratory_imports_path, class: "global-footer-link" %>
+    </nav>
   </body>
 </html>

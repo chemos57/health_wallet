@@ -56,3 +56,35 @@
   /* Transitions */
   --transition-fast: 0.2s;
 }
+
+.global-footer-nav {
+  display: flex;
+  justify-content: center;
+  gap: var(--spacing-md);
+  max-width: var(--container-max-width);
+  margin: var(--spacing-2xl) auto;
+  padding: 0 20px;
+  font-family: var(--font-family);
+}
+
+.global-footer-link {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 112px;
+  min-height: 40px;
+  padding: 0 var(--spacing-md);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-sm);
+  color: var(--color-primary);
+  background: var(--color-white);
+  text-decoration: none;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+}
+
+.global-footer-link:hover {
+  background: var(--color-primary);
+  color: var(--color-white);
+}

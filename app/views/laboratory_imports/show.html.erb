@@ -1,0 +1,47 @@
+<div class="patient-detail">
+  <div class="patient-header">
+    <%= link_to "← Back to Imports", laboratory_imports_path, class: "back-link" %>
+    <div class="header-row">
+      <h1><%= @laboratory_import.original_filename %></h1>
+      <%= link_to "Upload Another", new_laboratory_import_path, class: "btn btn-secondary" %>
+    </div>
+  </div>
+
+  <% if notice %>
+    <div class="flash-notice"><%= notice %></div>
+  <% end %>
+
+  <div class="patient-info">
+    <div class="info-item">
+      <span class="info-label">Status</span>
+      <span class="info-value"><span class="status-badge status-<%= @laboratory_import.status %>"><%= @laboratory_import.status.titleize %></span></span>
+    </div>
+    <div class="info-item">
+      <span class="info-label">Uploaded</span>
+      <span class="info-value"><%= @laboratory_import.created_at&.to_fs(:short) %></span>
+    </div>
+    <div class="info-item">
+      <span class="info-label">Processed</span>
+      <span class="info-value"><%= @laboratory_import.processed_at&.to_fs(:short) || "Pending" %></span>
+    </div>
+  </div>
+
+  <% if @laboratory_import.status == "failed" %>
+    <div class="flash-error"><%= @laboratory_import.error_message %></div>
+  <% end %>
+
+  <div class="assessment-info">
+    <div class="info-item">
+      <span class="info-label">Patients</span>
+      <span class="info-value"><%= @laboratory_import.patients_count %></span>
+    </div>
+    <div class="info-item">
+      <span class="info-label">Assessments</span>
+      <span class="info-value"><%= @laboratory_import.assessments_count %></span>
+    </div>
+    <div class="info-item">
+      <span class="info-label">Observations</span>
+      <span class="info-value"><%= @laboratory_import.observations_count %></span>
+    </div>
+  </div>
+</div>
