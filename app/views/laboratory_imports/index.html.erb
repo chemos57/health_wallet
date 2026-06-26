@@ -1,0 +1,35 @@
+<div class="patients-container">
+  <div class="header-row">
+    <h1>Laboratory Imports</h1>
+    <%= link_to "Upload Results", new_laboratory_import_path, class: "btn btn-primary" %>
+  </div>
+
+  <% if @laboratory_imports.any? %>
+    <table class="patients-table">
+      <thead>
+        <tr>
+          <th>File</th>
+          <th>Status</th>
+          <th>Patients</th>
+          <th>Assessments</th>
+          <th>Observations</th>
+          <th>Uploaded</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @laboratory_imports.each do |laboratory_import| %>
+          <tr>
+            <td><%= link_to laboratory_import.original_filename, laboratory_import_path(laboratory_import), class: "patient-link" %></td>
+            <td><span class="status-badge status-<%= laboratory_import.status %>"><%= laboratory_import.status.titleize %></span></td>
+            <td><%= laboratory_import.patients_count %></td>
+            <td><%= laboratory_import.assessments_count %></td>
+            <td><%= laboratory_import.observations_count %></td>
+            <td><%= laboratory_import.created_at&.to_fs(:short) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  <% else %>
+    <div class="no-patients">No laboratory imports found.</div>
+  <% end %>
+</div>

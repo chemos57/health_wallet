@@ -10,4 +10,11 @@ class HomeControllerTest < ActionDispatch::IntegrationTest
     get root_url
     assert_match "Health Wallet", response.body
   end
+
+  test "shows bottom navigation to patients and imports" do
+    get root_url
+
+    assert_select ".global-footer-nav a[href=?]", patients_path, text: "Patients"
+    assert_select ".global-footer-nav a[href=?]", laboratory_imports_path, text: "Imports"
+  end
 end
